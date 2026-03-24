@@ -1,0 +1,70 @@
+<!--
+  POGI SCRIPTS
+  Do not edit this code without informing James Pogio
+  Contact: james.pogio@eagleview.com
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HON</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;500;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="src/HON.css"/>
+</head>
+<body>
+
+<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+  <span class="toggle-icon" id="themeIcon">☀️</span>
+  <span id="themeLabel">Light</span>
+</button>
+
+<div class="container">
+  <div class="header">
+    <div class="badge">Hipster</div>
+    <h1>Operator <span>Notes</span></h1>
+    <p class="subtitle">Fetches job → extracts ID → auto-fetches notes</p>
+  </div>
+
+  <div class="card">
+    <label class="field-label">Report ID</label>
+    <div class="input-row">
+      <div class="input-wrap">
+        <span class="icon">#</span>
+        <input type="text" id="reportId" placeholder="e.g. 69735413" autocomplete="off" />
+      </div>
+      <button class="primary" id="runBtn" onclick="runPipeline()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Run
+      </button>
+    </div>
+
+    <div class="pipeline">
+      <div class="pipe-step" id="pipeStep1">
+        <div class="pipe-icon">01</div>
+        <div class="pipe-label"><strong>Job</strong></div>
+        <div class="pipe-status" id="pipeStatus1">idle</div>
+      </div>
+      <div class="pipe-step step2" id="pipeStep2">
+        <div class="pipe-icon">02</div>
+        <div class="pipe-label"><strong>Note</strong></div>
+        <div class="pipe-status" id="pipeStatus2">waiting</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes-wrap" id="notesWrap">
+    <div class="notes-header">
+      <div class="notes-title">
+        Notes
+        <span class="notes-count" id="notesCount"></span>
+      </div>
+      <button class="copy-btn" id="copyAllBtn" onclick="copyAll()">Copy All</button>
+    </div>
+    <div id="notesList"></div>
+  </div>
+</div>
+
+<script src="src/HON.js"></script>
+</body>
+</html>

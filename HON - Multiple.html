@@ -1,0 +1,1041 @@
+<!--
+  POGI SCRIPTS
+  Do not edit this code without informing James Pogio
+  Contact: james.pogio@eagleview.com
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HON</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;500;700&display=swap" rel="stylesheet"/>
+  <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-a: #0f0c29;
+  --bg-b: #302b63;
+  --bg-c: #24243e;
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.13);
+  --glass-highlight: rgba(255, 255, 255, 0.18);
+  --blur: 18px;
+  --accent: #a78bfa;
+  --accent-dim: rgba(167, 139, 250, 0.15);
+  --accent-glow: rgba(167, 139, 250, 0.4);
+  --text: rgba(255, 255, 255, 0.92);
+  --text-muted: rgba(255, 255, 255, 0.42);
+  --success: #6ee7b7;
+  --error: #fca5a5;
+  --accent2: #f9a8d4;
+  --bg: transparent;
+  --surface: var(--glass-bg);
+  --border: var(--glass-border);
+}
+
+:root.light {
+  --bg-a: #e0e7ff;
+  --bg-b: #f0fdf4;
+  --bg-c: #fdf4ff;
+  --glass-bg: rgba(255, 255, 255, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.75);
+  --glass-highlight: rgba(255, 255, 255, 0.9);
+  --blur: 20px;
+  --accent: #7c3aed;
+  --accent-dim: rgba(124, 58, 237, 0.10);
+  --accent-glow: rgba(124, 58, 237, 0.25);
+  --text: #1e1b4b;
+  --text-muted: #6b7280;
+  --success: #059669;
+  --error: #dc2626;
+  --accent2: #db2777;
+  --bg: transparent;
+  --surface: var(--glass-bg);
+  --border: var(--glass-border);
+}
+
+body {
+  background: linear-gradient(135deg, var(--bg-a) 0%, var(--bg-b) 50%, var(--bg-c) 100%);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: 'IBM Plex Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem;
+}
+
+body::before, body::after {
+  content: '';
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+  z-index: 0;
+}
+
+body::before {
+  width: 520px; height: 520px;
+  top: -120px; left: -100px;
+  background: radial-gradient(circle, rgba(167,139,250,0.28) 0%, transparent 70%);
+}
+
+body::after {
+  width: 400px; height: 400px;
+  bottom: -80px; right: -80px;
+  background: radial-gradient(circle, rgba(249,168,212,0.22) 0%, transparent 70%);
+}
+
+:root.light body::before {
+  background: radial-gradient(circle, rgba(124,58,237,0.14) 0%, transparent 70%);
+}
+
+:root.light body::after {
+  background: radial-gradient(circle, rgba(219,39,119,0.12) 0%, transparent 70%);
+}
+
+.container { width: 100%; max-width: 760px; padding-top: 1rem; position: relative; z-index: 1; }
+
+.header { margin-bottom: 2rem; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid rgba(167,139,250,0.35);
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 1rem;
+  backdrop-filter: blur(8px);
+}
+
+.badge::before {
+  content: '';
+  display: inline-block;
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse 1.8s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+
+h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.03em; }
+h1 span { color: var(--accent); }
+.subtitle { margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted); font-weight: 300; }
+
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 1.75rem;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18), inset 0 1px 0 var(--glass-highlight);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
+}
+
+.field-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.input-row { display: flex; gap: 0.75rem; align-items: stretch; }
+.input-wrap { flex: 1; position: relative; }
+
+.input-wrap .icon {
+  position: absolute;
+  left: 14px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  pointer-events: none;
+}
+
+input[type="text"] {
+  width: 100%;
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.95rem;
+  padding: 0.72rem 1rem 0.72rem 2.5rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+:root.light input[type="text"] {
+  background: rgba(255,255,255,0.55);
+}
+
+input[type="text"]:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim), 0 0 20px var(--accent-glow);
+}
+
+input[type="text"]::placeholder { color: var(--text-muted); }
+
+/* ── Multi-tag pill input ── */
+.tags-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  width: 100%;
+  min-height: 43px;
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  padding: 6px 10px 6px 36px;
+  cursor: text;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+
+:root.light .tags-box { background: rgba(255,255,255,0.55); }
+
+.tags-box:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim), 0 0 20px var(--accent-glow);
+}
+
+.tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--accent-dim);
+  border: 1px solid rgba(167,139,250,0.35);
+  color: var(--accent);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  padding: 2px 8px 2px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.tag-pill .tag-remove {
+  cursor: pointer;
+  font-size: 0.8rem;
+  line-height: 1;
+  color: var(--accent);
+  opacity: 0.6;
+  transition: opacity 0.15s;
+  padding: 0 1px;
+}
+
+.tag-pill .tag-remove:hover { opacity: 1; }
+
+.tag-input {
+  flex: 1;
+  min-width: 120px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.88rem;
+  padding: 2px 4px;
+}
+
+.tag-input::placeholder { color: var(--text-muted); }
+.tag-hint {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  margin-top: 0.35rem;
+  font-family: 'IBM Plex Mono', monospace;
+  letter-spacing: 0.04em;
+}
+
+button.primary {
+  background: linear-gradient(135deg, var(--accent), rgba(167,139,250,0.7));
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0 1.4rem;
+  height: 43px;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.1s, filter 0.2s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 15px var(--accent-glow);
+}
+
+button.primary:hover  { filter: brightness(1.15); box-shadow: 0 6px 24px var(--accent-glow); }
+button.primary:active { transform: scale(0.97); }
+button.primary:disabled { background: rgba(255,255,255,0.08); color: var(--text-muted); cursor: not-allowed; box-shadow: none; border-color: var(--glass-border); }
+
+.pipeline { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1.25rem; }
+
+.pipe-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.65rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--glass-border);
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
+  flex-wrap: wrap;
+}
+
+:root.light .pipe-step { background: rgba(255,255,255,0.35); }
+
+.pipe-step.active { border-color: rgba(167,139,250,0.5); background: rgba(167,139,250,0.08); box-shadow: 0 0 16px rgba(167,139,250,0.12); }
+.pipe-step.done   { border-color: rgba(110,231,183,0.4);  background: rgba(110,231,183,0.06); }
+.pipe-step.error  { border-color: rgba(252,165,165,0.4);  background: rgba(252,165,165,0.06); }
+.pipe-step.step2.active { border-color: rgba(249,168,212,0.5); background: rgba(249,168,212,0.08); box-shadow: 0 0 16px rgba(249,168,212,0.12); }
+
+.pipe-icon {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: border-color 0.3s, color 0.3s;
+}
+
+.pipe-step.active  .pipe-icon { border-color: var(--accent);  color: var(--accent); }
+.pipe-step.done    .pipe-icon { border-color: var(--success); color: var(--success); }
+.pipe-step.error   .pipe-icon { border-color: var(--error);   color: var(--error); }
+.pipe-step.step2.active .pipe-icon { border-color: var(--accent2); color: var(--accent2); }
+
+.pipe-label { color: var(--text-muted); flex-shrink: 0; }
+.pipe-label strong { color: var(--text); }
+
+.pipe-status {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  word-break: break-all;
+}
+
+.pipe-step.active  .pipe-status { color: var(--accent); }
+.pipe-step.done    .pipe-status { color: var(--success); }
+.pipe-step.error   .pipe-status { color: var(--error); }
+.pipe-step.step2.active .pipe-status { color: var(--accent2); }
+
+.id-pill {
+  display: inline-block;
+  background: rgba(110,231,183,0.12);
+  border: 1px solid rgba(110,231,183,0.3);
+  color: var(--success);
+  border-radius: 20px;
+  padding: 1px 9px;
+  font-size: 0.68rem;
+  margin-left: 6px;
+  vertical-align: middle;
+  word-break: break-all;
+}
+
+.spinner {
+  width: 10px; height: 10px;
+  border: 1.5px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.notes-wrap { display: none; }
+.notes-wrap.visible { display: block; animation: fadeUp 0.35s ease; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.notes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.notes-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notes-count {
+  background: rgba(167,139,250,0.15);
+  color: var(--accent);
+  border-radius: 20px;
+  padding: 1px 10px;
+  font-size: 0.65rem;
+  border: 1px solid rgba(167,139,250,0.25);
+}
+
+.copy-btn {
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  padding: 3px 12px;
+  font-size: 0.62rem;
+  border-radius: 20px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.copy-btn:hover { background: rgba(255,255,255,0.14); color: var(--text); border-color: var(--accent); }
+
+.note-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--glass-border);
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.note-operator {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.note-operator svg { opacity: 0.6; flex-shrink: 0; }
+
+.note-date {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.note-date svg { opacity: 0.5; flex-shrink: 0; }
+
+.note-value {
+  padding: 0.85rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.note-value.rejected { color: var(--error); }
+
+.error-msg {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--error);
+  padding: 1rem;
+  background: rgba(252,165,165,0.08);
+  border: 1px solid rgba(252,165,165,0.25);
+  border-radius: 10px;
+  backdrop-filter: blur(8px);
+}
+
+/* ── Notes table ── */
+.notes-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18), inset 0 1px 0 var(--glass-highlight);
+}
+
+.notes-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 0.825rem;
+}
+
+.notes-table thead tr {
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.notes-table th {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 0.65rem 1rem;
+  text-align: left;
+  white-space: nowrap;
+  background: rgba(255,255,255,0.03);
+}
+
+:root.light .notes-table th { background: rgba(255,255,255,0.25); }
+
+.notes-table tbody tr {
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transition: background 0.15s;
+}
+
+:root.light .notes-table tbody tr { border-bottom: 1px solid rgba(0,0,0,0.06); }
+
+.notes-table tbody tr:last-child { border-bottom: none; }
+.notes-table tbody tr:hover { background: rgba(167,139,250,0.05); }
+
+.notes-table td {
+  padding: 0.75rem 1rem;
+  vertical-align: top;
+  color: var(--text);
+}
+
+.notes-table td.col-report {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.notes-table td.col-operator {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.notes-table td.col-date {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.notes-table td.col-note {
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.6;
+  min-width: 220px;
+}
+
+.notes-table td.col-note.rejected { color: var(--error); }
+
+.theme-toggle {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 5px 12px 5px 8px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  z-index: 100;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.theme-toggle .toggle-icon {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+  </style>
+</head>
+<body>
+
+<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+  <span class="toggle-icon" id="themeIcon">☀️</span>
+  <span id="themeLabel">Light</span>
+</button>
+
+<div class="container">
+  <div class="header">
+    <div class="badge">Hipster</div>
+    <h1>Operator <span>Notes</span></h1>
+    <p class="subtitle">Fetches job → extracts ID → auto-fetches notes</p>
+  </div>
+
+  <div class="card">
+    <label class="field-label">Report ID</label>
+    <div class="input-row">
+      <div class="input-wrap" style="position:relative;">
+        <span class="icon">#</span>
+        <div class="tags-box" id="tagsBox" onclick="document.getElementById('tagInput').focus()">
+          <input type="text" id="tagInput" class="tag-input" placeholder="e.g. 69735413" autocomplete="off" />
+        </div>
+      </div>
+      <button class="primary" id="runBtn" onclick="runPipeline()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Run
+      </button>
+    </div>
+    <div class="tag-hint">Press <kbd style="background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:4px;padding:0 5px;font-size:0.6rem;">Enter</kbd> or <kbd style="background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:4px;padding:0 5px;font-size:0.6rem;">,</kbd> to add multiple IDs</div>
+
+    <div class="pipeline">
+      <div class="pipe-step" id="pipeStep1">
+        <div class="pipe-icon">01</div>
+        <div class="pipe-label"><strong>Job</strong></div>
+        <div class="pipe-status" id="pipeStatus1">idle</div>
+      </div>
+      <div class="pipe-step step2" id="pipeStep2">
+        <div class="pipe-icon">02</div>
+        <div class="pipe-label"><strong>Note</strong></div>
+        <div class="pipe-status" id="pipeStatus2">waiting</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes-wrap" id="notesWrap">
+    <div class="notes-header">
+      <div class="notes-title">
+        Notes
+        <span class="notes-count" id="notesCount"></span>
+      </div>
+      <div style="display:flex;gap:0.5rem;align-items:center;">
+        <button class="copy-btn" id="copyAllBtn" onclick="copyAll()">Copy All</button>
+        <button class="copy-btn" id="csvBtn" onclick="downloadCSV()">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:3px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          CSV
+        </button>
+      </div>
+    </div>
+    <div id="notesList"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// POGI SCRIPTS
+// Do not edit this code without informing James Pogio
+// Contact: james.pogio@eagleview.com
+// ============================================================
+
+// ── Tag/pill input logic ──────────────────────────────────
+const tagInput = document.getElementById('tagInput');
+let tags = [];
+
+function renderTags() {
+  const box = document.getElementById('tagsBox');
+  // Remove existing pills
+  box.querySelectorAll('.tag-pill').forEach(p => p.remove());
+  tags.forEach((tag, i) => {
+    const pill = document.createElement('span');
+    pill.className = 'tag-pill';
+    pill.innerHTML = `${escHtml(tag)}<span class="tag-remove" data-i="${i}" title="Remove">×</span>`;
+    pill.querySelector('.tag-remove').addEventListener('click', e => {
+      tags.splice(Number(e.target.dataset.i), 1);
+      renderTags();
+    });
+    box.insertBefore(pill, tagInput);
+  });
+  tagInput.placeholder = tags.length ? '' : 'e.g. 69735413';
+}
+
+function addTag(val) {
+  const ids = val.split(/[\s,]+/).map(s => s.trim()).filter(Boolean);
+  ids.forEach(id => { if (id && !tags.includes(id)) tags.push(id); });
+  tagInput.value = '';
+  renderTags();
+}
+
+tagInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const v = tagInput.value.trim().replace(/,$/, '');
+    if (v) addTag(v); else runPipeline();
+  } else if (e.key === 'Backspace' && !tagInput.value && tags.length) {
+    tags.pop();
+    renderTags();
+  }
+});
+
+tagInput.addEventListener('paste', e => {
+  e.preventDefault();
+  const pasted = (e.clipboardData || window.clipboardData).getData('text');
+  addTag(pasted);
+});
+
+tagInput.addEventListener('blur', () => {
+  const v = tagInput.value.trim().replace(/,$/, '');
+  if (v) addTag(v);
+});
+
+// ── Utilities ────────────────────────────────────────────
+function toggleTheme() {
+  const isLight = document.documentElement.classList.toggle('light');
+  document.getElementById('themeIcon').textContent  = isLight ? '🌙' : '☀️';
+  document.getElementById('themeLabel').textContent = isLight ? 'Dark' : 'Light';
+}
+
+function setStep(num, state, msg, spinner = false) {
+  const step   = document.getElementById(`pipeStep${num}`);
+  const status = document.getElementById(`pipeStatus${num}`);
+  step.className = `pipe-step${num === 2 ? ' step2' : ''} ${state}`;
+  status.innerHTML = spinner ? `<div class="spinner"></div> ${msg}` : msg;
+}
+
+function extractId(parsed, raw) {
+  if (parsed) {
+    if (parsed.id) return parsed.id;
+    if (parsed.ID) return parsed.ID;
+    if (Array.isArray(parsed) && parsed[0]?.id) return parsed[0].id;
+    for (const key of Object.keys(parsed)) {
+      if (typeof parsed[key] === 'object' && parsed[key]?.id) return parsed[key].id;
+    }
+  }
+  const match = raw.match(/"id"\s*:\s*"([0-9a-f\-]{36})"/i);
+  return match ? match[1] : null;
+}
+
+function formatDate(str) {
+  const d = new Date(str);
+  if (isNaN(d)) return str;
+  const dd  = String(d.getDate()).padStart(2, '0');
+  const mm  = String(d.getMonth() + 1).padStart(2, '0');
+  const yy  = String(d.getFullYear()).slice(-2);
+  const hh  = String(d.getHours()).padStart(2, '0');
+  const min = String(d.getMinutes()).padStart(2, '0');
+  const ss  = String(d.getSeconds()).padStart(2, '0');
+  return `${dd}/${mm}/${yy} ${hh}:${min}:${ss}`;
+}
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ── Table rendering ──────────────────────────────────────
+// allNotes = [{reportId, Operator, CreatedAt, Value}, ...]
+let allNotes = [];
+
+function renderTable() {
+  const list = document.getElementById('notesList');
+  list.innerHTML = '';
+  document.getElementById('notesCount').textContent = `${allNotes.length} ${allNotes.length === 1 ? 'entry' : 'entries'}`;
+
+  if (!allNotes.length) return;
+
+  const showReportCol = tags.length > 1 || allNotes.some(n => n.reportId);
+
+  const wrap = document.createElement('div');
+  wrap.className = 'notes-table-wrap';
+
+  const table = document.createElement('table');
+  table.className = 'notes-table';
+
+  // Header
+  const thead = document.createElement('thead');
+  thead.innerHTML = `<tr>
+    ${showReportCol ? '<th>Report ID</th>' : ''}
+    <th>Operator</th>
+    <th>Date</th>
+    <th>Note</th>
+  </tr>`;
+  table.appendChild(thead);
+
+  // Body
+  const tbody = document.createElement('tbody');
+  allNotes.forEach(note => {
+    const isRejected = note.Value && note.Value.toUpperCase().includes('REJECTED');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      ${showReportCol ? `<td class="col-report">${escHtml(note.reportId || '—')}</td>` : ''}
+      <td class="col-operator">${escHtml(note.Operator || '—')}</td>
+      <td class="col-date">${escHtml(formatDate(note.CreatedAt))}</td>
+      <td class="col-note${isRejected ? ' rejected' : ''}">${escHtml(note.Value || '').replace(/\\n|\n/g, '\n')}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  wrap.appendChild(table);
+  list.appendChild(wrap);
+
+  document.getElementById('notesWrap').classList.add('visible');
+}
+
+function showError(msg) {
+  const list = document.getElementById('notesList');
+  list.innerHTML = `<div class="error-msg">✕ ${escHtml(msg)}</div>`;
+  document.getElementById('notesCount').textContent = '';
+  document.getElementById('notesWrap').classList.add('visible');
+}
+
+// ── Pipeline ─────────────────────────────────────────────
+const BATCH_SIZE      = 10;   // concurrent requests per batch
+const BATCH_DELAY_MS  = 600;  // pause between batches (ms)
+const MAX_RETRIES     = 4;
+const RETRY_BASE_MS   = 1000; // exponential backoff base
+
+async function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function fetchNotesForId(requesterId, attempt = 0) {
+  try {
+    // Step 1: Job
+    const res1  = await fetch(`https://api.cmh.platform-prod.evinternal.net/inform-measures/hipster/v3/job?requester_id=${encodeURIComponent(requesterId)}&source=gov`);
+    const text1 = await res1.text();
+    let parsed1;
+    try { parsed1 = JSON.parse(text1); } catch { parsed1 = null; }
+
+    // If rate-limited or server error, throw so retry kicks in
+    if (!res1.ok) throw new Error(`Job HTTP ${res1.status}`);
+
+    const jobId = extractId(parsed1, text1);
+    if (!jobId) throw new Error(`No "id" in job response`);
+
+    // Step 2: Notes
+    const res2  = await fetch(`https://api.cmh.platform-prod.evinternal.net/inform-measures/hipster/v3/note?job_id=${encodeURIComponent(jobId)}`);
+    const text2 = await res2.text();
+    let parsed2;
+    try { parsed2 = JSON.parse(text2); } catch { parsed2 = null; }
+
+    if (!res2.ok) throw new Error(`Notes HTTP ${res2.status}`);
+    return { jobId, notes: parsed2?.Notes && Array.isArray(parsed2.Notes) ? parsed2.Notes : [] };
+
+  } catch (err) {
+    if (attempt < MAX_RETRIES) {
+      const delay = RETRY_BASE_MS * Math.pow(2, attempt); // 1s, 2s, 4s, 8s
+      await sleep(delay);
+      return fetchNotesForId(requesterId, attempt + 1);
+    }
+    throw err;
+  }
+}
+
+async function runBatched(ids, onProgress) {
+  const results = new Array(ids.length);
+  for (let i = 0; i < ids.length; i += BATCH_SIZE) {
+    const batchIds     = ids.slice(i, i + BATCH_SIZE);
+    const batchResults = await Promise.allSettled(
+      batchIds.map((id, j) =>
+        fetchNotesForId(id).then(r => ({ ...r, id }))
+          .finally(() => onProgress())
+      )
+    );
+    batchResults.forEach((r, j) => { results[i + j] = r; });
+    // Pause between batches (skip after last)
+    if (i + BATCH_SIZE < ids.length) await sleep(BATCH_DELAY_MS);
+  }
+  return results;
+}
+
+async function runPipeline() {
+  const pending = tagInput.value.trim().replace(/,$/, '');
+  if (pending) addTag(pending);
+
+  const ids = [...tags];
+  if (!ids.length) {
+    tagInput.focus();
+    setStep(1, 'error', '⚠ enter at least one ID');
+    return;
+  }
+
+  const btn = document.getElementById('runBtn');
+  btn.disabled = true;
+  allNotes = [];
+  document.getElementById('notesWrap').classList.remove('visible');
+  document.getElementById('notesList').innerHTML = '';
+
+  const totalBatches = Math.ceil(ids.length / BATCH_SIZE);
+  setStep(1, 'active', `0 / ${ids.length}`, true);
+  setStep(2, 'active', '', true);
+
+  let done = 0;
+  const results = await runBatched(ids, () => {
+    done++;
+    setStep(1, 'active', `${done} / ${ids.length}`, true);
+  });
+
+  const failedIds  = [];
+  let   totalNotes = 0;
+
+  results.forEach((res, i) => {
+    if (res.status === 'fulfilled') {
+      const { id, notes } = res.value;
+      notes.forEach(n => allNotes.push({ ...n, reportId: id }));
+      totalNotes += notes.length;
+    } else {
+      failedIds.push({ id: ids[i], reason: res.reason?.message || String(res.reason) });
+    }
+  });
+
+  const successCount = ids.length - failedIds.length;
+
+  if (failedIds.length && !allNotes.length) {
+    setStep(1, 'error', `✕ all ${failedIds.length} failed`);
+    setStep(2, 'error', '✕ no notes');
+    showError(failedIds.map(f => `${f.id}: ${f.reason}`).join('\n'));
+    renderRetryBanner(failedIds.map(f => f.id), failedIds);
+    btn.disabled = false;
+    return;
+  }
+
+  setStep(1, failedIds.length ? 'error' : 'done',
+    failedIds.length
+      ? `⚠ ${successCount} ok · ${failedIds.length} failed`
+      : `✓ ${successCount} job${successCount !== 1 ? 's' : ''}`
+  );
+
+  if (allNotes.length) {
+    setStep(2, 'done', `✓ ${totalNotes} note${totalNotes !== 1 ? 's' : ''}`);
+    renderTable();
+  } else {
+    setStep(2, 'done', '✓ no notes');
+    showError('No notes found for the provided IDs.');
+  }
+
+  if (failedIds.length) renderRetryBanner(failedIds.map(f => f.id), failedIds);
+
+  btn.disabled = false;
+}
+
+function renderRetryBanner(failedIdList, failedDetails) {
+  const list = document.getElementById('notesList');
+  const div  = document.createElement('div');
+  div.className = 'error-msg';
+  div.style.cssText = 'margin-top:0.75rem;display:flex;flex-direction:column;gap:0.6rem;';
+  div.innerHTML = `
+    <div><strong>Failed (${failedIdList.length}):</strong><br>
+      ${(failedDetails || failedIdList.map(id => ({ id, reason: 'unknown' }))).map(f => `<span style="opacity:.8">${escHtml(String(f.id || f))}: ${escHtml(f.reason || '')}</span>`).join('<br>')}
+    </div>
+    <button class="copy-btn" style="align-self:flex-start;color:var(--error);border-color:rgba(252,165,165,0.4);" onclick="retryFailed(${JSON.stringify(failedIdList)})">
+      ↺ Retry ${failedIdList.length} failed ID${failedIdList.length !== 1 ? 's' : ''}
+    </button>`;
+  list.appendChild(div);
+  document.getElementById('notesWrap').classList.add('visible');
+}
+
+async function retryFailed(failedIdList) {
+  tags = failedIdList.slice();
+  renderTags();
+  await runPipeline();
+}
+
+function copyAll() {
+  let out = '';
+  allNotes.forEach((note, i) => {
+    out += `[${i + 1}] ${formatDate(note.CreatedAt)}  |  ${note.Operator || '—'}  |  Report: ${note.reportId || ''}\n${note.Value || ''}\n\n`;
+  });
+  navigator.clipboard.writeText(out.trim()).then(() => {
+    const btn = document.getElementById('copyAllBtn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy All', 1500);
+  });
+}
+
+function downloadCSV() {
+  const showReport = allNotes.some(n => n.reportId);
+  const headers = [...(showReport ? ['Report ID'] : []), 'Operator', 'Date', 'Note'];
+
+  function csvCell(val) {
+    const s = String(val ?? '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    // Wrap in quotes if contains comma, quote, or newline
+    if (s.includes('"') || s.includes(',') || s.includes('\n')) {
+      return '"' + s.replace(/"/g, '""') + '"';
+    }
+    return s;
+  }
+
+  const rows = [headers.map(csvCell).join(',')];
+  allNotes.forEach(note => {
+    const row = [
+      ...(showReport ? [note.reportId || ''] : []),
+      note.Operator || '',
+      formatDate(note.CreatedAt),
+      note.Value || ''
+    ];
+    rows.push(row.map(csvCell).join(','));
+  });
+
+  const blob = new Blob([rows.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const ts   = new Date().toISOString().slice(0, 10);
+  a.href     = url;
+  a.download = `operator-notes-${ts}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  const btn = document.getElementById('csvBtn');
+  const orig = btn.innerHTML;
+  btn.textContent = 'Downloaded!';
+  setTimeout(() => { btn.innerHTML = orig; }, 1500);
+}
+</script>
+</body>
+</html>
