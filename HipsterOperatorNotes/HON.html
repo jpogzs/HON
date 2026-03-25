@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Operator Notes</title>
+  <!--
+    ============================================================
+    POGI SCRIPTS
+    Do not edit this code without informing James Pogio
+    Contact: james.pogio@eagleview.com
+    ============================================================
+  -->
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="src/HON.css"/>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="header-row">
+      <div>
+        <div class="badge">Hipster</div>
+        <h1>Operator <span>Notes</span></h1>
+        <p class="subtitle">Fetch Tech/QC notes from a Hipster job</p>
+      </div>
+      <button class="theme-toggle" id="themeToggle" title="Toggle dark/light mode">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="search-panel fade-section">
+    <label class="input-label" for="reportId">Report IDs (comma or newline separated)</label>
+    <div class="input-row">
+      <div class="input-wrapper">
+        <textarea id="reportId" placeholder="Enter report IDs (comma or newline separated)..." autocomplete="off" spellcheck="false" rows="2"></textarea>
+      </div>
+      <button class="btn" id="fetchBtn" onclick="fetchTask()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        Fetch
+      </button>
+    </div>
+    <div class="url-preview" id="urlPreview" style="display:none;">
+      Enter a Report ID to see the API endpoint
+    </div>
+  </div>
+
+  <div class="status" id="statusBox">
+    <div class="spinner" id="spinner"></div>
+    <span id="statusText"></span>
+  </div>
+
+  <div class="result-panel" id="resultPanel" style="display:none !important;">
+    <div class="result-header">
+      <span class="result-title">&#x2713; Response</span>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="result-meta" id="resultMeta"></span>
+        <button class="copy-btn" onclick="copyJSON()">Copy JSON</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('formatted', this)">Formatted</button>
+      <button class="tab" onclick="switchTab('raw', this)">Raw JSON</button>
+    </div>
+
+    <div class="tab-content active" id="tab-formatted">
+      <div class="fields-grid" id="fieldsGrid"></div>
+    </div>
+
+    <div class="tab-content" id="tab-raw">
+      <div class="raw-view">
+        <pre id="rawJson"></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline Section -->
+  <div id="stateSection" class="fade-section" style="display:none;">
+
+    <div class="state-status" id="stateStatusBox">
+      <div class="spinner2" id="stateSpinner"></div>
+      <span id="stateStatusText"></span>
+    </div>
+
+    <div class="state-panel" id="statePanel">
+      <div class="state-header">
+        <span class="state-title">&#x25CF; Timeline</span>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span class="state-count" id="stateCount"></span>
+          <button class="copy-btn" onclick="exportCSV()">Export CSV</button>
+        </div>
+      </div>
+      <!-- Skeleton loader -->
+      <div class="skeleton-table" id="skeletonLoader">
+        <div class="skeleton-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div></div>
+        <div class="skeleton-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div></div>
+        <div class="skeleton-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div></div>
+        <div class="skeleton-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div></div>
+        <div class="skeleton-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div></div>
+        <div class="skeleton-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div></div>
+      </div>
+      <div class="table-wrap" id="tableWrap" style="display:none;">
+        <table>
+          <thead>
+            <tr>
+              <th>Report ID</th>
+              <th>Time (PDT/PST)</th>
+              <th>QC</th>
+              <th>Description</th>
+              <th>Tech</th>
+            </tr>
+          </thead>
+          <tbody id="stateTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Job Info Section (hidden) -->
+  <div id="jobInfoSection" style="display:none !important;">
+    <div class="section-divider">
+      <div class="section-divider-line"></div>
+      <div class="section-divider-label">&#x25BA; Job Information</div>
+      <div class="section-divider-line" style="background: linear-gradient(90deg, transparent, var(--border));"></div>
+    </div>
+
+    <div class="state-status" id="jobStatusBox">
+      <div class="spinner2" id="jobSpinner"></div>
+      <span id="jobStatusText"></span>
+    </div>
+
+    <div class="state-panel" id="jobPanel">
+      <div class="state-header">
+        <span class="state-title">&#x25CF; Job Details</span>
+        <span class="state-count" id="jobCount"></span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody id="jobTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+
+</div>
+
+<script src="src/HON.js"></script>
+</body>
+</html>
