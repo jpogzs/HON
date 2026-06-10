@@ -179,8 +179,7 @@ async function fetchTask() {
         }
 
         try {
-          const jobResp = await fetchWithRetry(`${JOB_BASE_URL}?requester_id=${encodeURIComponent(reportId)}&source=gov`);
-          const jobData = await jobResp.json();
+          const jobData = await fetchJobDataWithFallback(reportId);
           const jobArray = Array.isArray(jobData) ? jobData : [jobData];
           if (jobArray.length > 0 && jobArray[0].ID) {
             try {
@@ -249,31 +248,19 @@ async function fetchTaskState(taskId) {
 // ===== Job Info Fetch =====
 async function fetchJobInfo(reportId) {
   jobPanel.classList.remove('visible');
-
   try {
-    const url = `${JOB_BASE_URL}?requester_id=${encodeURIComponent(reportId)}&source=gov`;
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: { 'Accept': 'application/json' }
-    });
-
-    if (!response.ok) throw new Error(`HTTP ${response.status} — ${response.statusText}`);
-
-    const jobData = await response.json();
+    const jobData = await fetchJobDataWithFallback(reportId);
     lastJobData = jobData;
     hideJobStatus();
 
     const jobArray = Array.isArray(jobData) ? jobData : [jobData];
-    if (jobArray.length > 0) {
+    if (jobArray.length > 0 && jobArray[0]) {
       renderJobTable(jobArray[0]);
       jobPanel.classList.add('visible');
 
       const jobId = jobArray[0].ID;
-      if (jobId) {
-        fetchNotes(jobId);
-      }
+      if (jobId) fetchNotes(jobId);
     }
-
   } catch (err) {
     showJobStatus('error', `Job fetch error: ${err.message}`);
   }
@@ -300,6 +287,30 @@ async function fetchNotes(jobId) {
   } catch (err) {
     console.error(`Notes fetch error: ${err.message}`);
   }
+}
+
+// ===== Job Fetch with Fallback (gov -> assess) =====
+async function fetchJobDataWithFallback(reportId) {
+  const sources = ['gov', 'assess'];
+  for (const src of sources) {
+    try {
+      const resp = await fetchWithRetry(`${JOB_BASE_URL}?requester_id=${encodeURIComponent(reportId)}&source=${src}`);
+      if (!resp.ok) {
+        console.warn(`Job fetch ${src} HTTP ${resp.status} for ${reportId}`);
+        continue;
+      }
+      const data = await resp.json();
+      if (data && typeof data === 'object' && data.errorCode === 77028 && /record not found/i.test(data.errorDescription || '')) {
+        console.warn(`Job API source=${src} returned record not found for ${reportId}; trying next source`);
+        continue;
+      }
+      return data;
+    } catch (e) {
+      console.warn(`Job fetch error for source=${src} (${e.message})`);
+      continue;
+    }
+  }
+  return [];
 }
 
 function showJobStatus(type, message) {

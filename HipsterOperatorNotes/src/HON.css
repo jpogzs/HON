@@ -276,7 +276,7 @@ h1 span {
 .input-row {
   display: flex;
   gap: 12px;
-  align-items: stretch;
+  align-items: center;
 }
 
 .input-wrapper {
@@ -337,7 +337,7 @@ input[type="text"]:focus, textarea:focus {
   cursor: pointer;
   transition: all var(--transition);
   white-space: nowrap;
-  align-self: flex-end;
+  align-self: center;
   height: 50px;
   box-shadow: var(--shadow-sm);
 }
